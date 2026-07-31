@@ -44,8 +44,3 @@ Automated test suite for [SauceDemo](https://www.saucedemo.com), built with Play
 ## Design Notes
 - Uses a `pytest` fixture (`logged_in_page`) to handle login setup once, reused across cart/checkout tests — avoids repeating the same steps in every test (DRY principle)
 - Tests use Playwright's built-in `expect()` assertions, which auto-wait for elements rather than relying on manual sleeps/timeouts — this makes tests more reliable and less flaky
-
-## Next Steps
-- Add CI/CD via GitHub Actions to run this suite automatically on every push
-- Introduce Page Object Model as the suite grows
-- Add HTML/Allure reporting

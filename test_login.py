@@ -1,38 +1,37 @@
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Page
+
+from config import (
+    INVALID_PASSWORD,
+    LOCKED_OUT_USER,
+    PASSWORD,
+    STANDARD_USER,
+)
+from pages.login_page import LoginPage
+
 
 def test_valid_login(page: Page):
-    # Navigate to SauceDemo
-    page.goto("https://www.saucedemo.com")
+    login_page = LoginPage(page)
 
-    # Fill in valid credentials
-    page.fill("#user-name", "standard_user")
-    page.fill("#password", "secret_sauce")
+    login_page.open()
+    login_page.login(STANDARD_USER, PASSWORD)
+    login_page.verify_successful_login()
 
-    # Click login
-    page.click("#login-button")
-
-    # Assert we landed on the Products page
-    expect(page).to_have_url("https://www.saucedemo.com/inventory.html")
-    expect(page.locator(".title")).to_have_text("Products")
 
 def test_invalid_login(page: Page):
-    page.goto("https://www.saucedemo.com")
-    page.fill("#user-name", "standard_user")
-    page.fill("#password", "wrong_password")
-    page.click("#login-button")
+    login_page = LoginPage(page)
 
-    # Assert error message is shown
-    error = page.locator("[data-test='error']")
-    expect(error).to_be_visible()
-    expect(error).to_contain_text("Username and password do not match")
+    login_page.open()
+    login_page.login(STANDARD_USER, INVALID_PASSWORD)
+    login_page.verify_error_message(
+        "Username and password do not match"
+    )
 
 
 def test_locked_out_user(page: Page):
-    page.goto("https://www.saucedemo.com")
-    page.fill("#user-name", "locked_out_user")
-    page.fill("#password", "secret_sauce")
-    page.click("#login-button")
+    login_page = LoginPage(page)
 
-    error = page.locator("[data-test='error']")
-    expect(error).to_be_visible()
-    expect(error).to_contain_text("Sorry, this user has been locked out")
+    login_page.open()
+    login_page.login(LOCKED_OUT_USER, PASSWORD)
+    login_page.verify_error_message(
+        "Sorry, this user has been locked out"
+    )

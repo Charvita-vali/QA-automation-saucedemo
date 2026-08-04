@@ -1,5 +1,12 @@
 from playwright.sync_api import Page, expect
 
+from config import (
+    CART_URL,
+    CHECKOUT_COMPLETE_URL,
+    CHECKOUT_STEP_ONE_URL,
+    CHECKOUT_STEP_TWO_URL,
+)
+
 def test_add_single_item_to_cart(logged_in_page: Page):
     page = logged_in_page
     page.click("#add-to-cart-sauce-labs-backpack")
@@ -33,12 +40,11 @@ def test_full_checkout_flow(logged_in_page: Page):
     # Add an item and go to cart
     page.click("#add-to-cart-sauce-labs-backpack")
     page.click(".shopping_cart_link")
-    expect(page).to_have_url("https://www.saucedemo.com/cart.html")
+    expect(page).to_have_url(CART_URL)
 
     # Proceed to checkout
     page.click("#checkout")
-    expect(page).to_have_url("https://www.saucedemo.com/checkout-step-one.html")
-
+    expect(page).to_have_url(CHECKOUT_STEP_ONE_URL)
     # Fill in checkout info
     page.fill("#first-name", "Charvita")
     page.fill("#last-name", "Vali")
@@ -46,11 +52,11 @@ def test_full_checkout_flow(logged_in_page: Page):
     page.click("#continue")
 
     # Verify overview page and finish order
-    expect(page).to_have_url("https://www.saucedemo.com/checkout-step-two.html")
+    expect(page).to_have_url(CHECKOUT_STEP_TWO_URL)
     page.click("#finish")
 
     # Verify order confirmation
-    expect(page).to_have_url("https://www.saucedemo.com/checkout-complete.html")
+    expect(page).to_have_url(CHECKOUT_COMPLETE_URL)
     expect(page.locator(".complete-header")).to_have_text("Thank you for your order!")
 
 

@@ -1,17 +1,4 @@
 from playwright.sync_api import Page, expect
-import pytest
-
-
-@pytest.fixture
-def logged_in_page(page: Page):
-    """Reusable setup: logs in before each test, so we don't repeat this in every test."""
-    page.goto("https://www.saucedemo.com")
-    page.fill("#user-name", "standard_user")
-    page.fill("#password", "secret_sauce")
-    page.click("#login-button")
-    expect(page).to_have_url("https://www.saucedemo.com/inventory.html")
-    return page
-
 
 def test_add_single_item_to_cart(logged_in_page: Page):
     page = logged_in_page

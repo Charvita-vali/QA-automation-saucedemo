@@ -1,75 +1,76 @@
-from playwright.sync_api import Page, expect
+from playwright.sync_api import Page
 
-from config import (
-    CART_URL,
-    CHECKOUT_COMPLETE_URL,
-    CHECKOUT_STEP_ONE_URL,
-    CHECKOUT_STEP_TWO_URL,
-)
+from pages.cart_page import CartPage
+from pages.checkout_page import CheckoutPage
+from pages.inventory_page import InventoryPage
+
 
 def test_add_single_item_to_cart(logged_in_page: Page):
-    page = logged_in_page
-    page.click("#add-to-cart-sauce-labs-backpack")
+    inventory_page = InventoryPage(logged_in_page)
 
-    cart_badge = page.locator(".shopping_cart_badge")
-    expect(cart_badge).to_have_text("1")
+    inventory_page.add_backpack()
+    inventory_page.verify_cart_count("1")
 
 
 def test_add_multiple_items_to_cart(logged_in_page: Page):
-    page = logged_in_page
-    page.click("#add-to-cart-sauce-labs-backpack")
-    page.click("#add-to-cart-sauce-labs-bike-light")
-    page.click("#add-to-cart-sauce-labs-bolt-t-shirt")
+    inventory_page = InventoryPage(logged_in_page)
 
-    cart_badge = page.locator(".shopping_cart_badge")
-    expect(cart_badge).to_have_text("3")
+    inventory_page.add_backpack()
+    inventory_page.add_bike_light()
+    inventory_page.add_bolt_tshirt()
+    inventory_page.verify_cart_count("3")
 
 
 def test_remove_item_from_product_page(logged_in_page: Page):
-    page = logged_in_page
-    page.click("#add-to-cart-sauce-labs-backpack")
-    expect(page.locator(".shopping_cart_badge")).to_have_text("1")
+    inventory_page = InventoryPage(logged_in_page)
 
-    page.click("#remove-sauce-labs-backpack")
-    expect(page.locator(".shopping_cart_badge")).to_have_count(0)
+    inventory_page.add_backpack()
+    inventory_page.verify_cart_count("1")
+
+    inventory_page.remove_backpack()
+    inventory_page.verify_cart_badge_removed()
 
 
 def test_full_checkout_flow(logged_in_page: Page):
-    page = logged_in_page
+    inventory_page = InventoryPage(logged_in_page)
+    cart_page = CartPage(logged_in_page)
+    checkout_page = CheckoutPage(logged_in_page)
 
-    # Add an item and go to cart
-    page.click("#add-to-cart-sauce-labs-backpack")
-    page.click(".shopping_cart_link")
-    expect(page).to_have_url(CART_URL)
+    inventory_page.add_backpack()
+    inventory_page.open_cart()
 
-    # Proceed to checkout
-    page.click("#checkout")
-    expect(page).to_have_url(CHECKOUT_STEP_ONE_URL)
-    # Fill in checkout info
-    page.fill("#first-name", "Charvita")
-    page.fill("#last-name", "Vali")
-    page.fill("#postal-code", "33496")
-    page.click("#continue")
+    cart_page.verify_cart_page()
+    cart_page.verify_backpack_is_present()
+    cart_page.proceed_to_checkout()
 
-    # Verify overview page and finish order
-    expect(page).to_have_url(CHECKOUT_STEP_TWO_URL)
-    page.click("#finish")
-
-    # Verify order confirmation
-    expect(page).to_have_url(CHECKOUT_COMPLETE_URL)
-    expect(page.locator(".complete-header")).to_have_text("Thank you for your order!")
+    checkout_page.enter_checkout_information(
+        first_name="Charvita",
+        last_name="Vali",
+        postal_code="33496",
+    )
+    checkout_page.continue_to_overview()
+    checkout_page.finish_order()
+    checkout_page.verify_order_confirmation()
 
 
-def test_checkout_missing_last_name_shows_error(logged_in_page: Page):
-    page = logged_in_page
-    page.click("#add-to-cart-sauce-labs-backpack")
-    page.click(".shopping_cart_link")
-    page.click("#checkout")
+def test_checkout_missing_last_name_shows_error(
+    logged_in_page: Page,
+):
+    inventory_page = InventoryPage(logged_in_page)
+    cart_page = CartPage(logged_in_page)
+    checkout_page = CheckoutPage(logged_in_page)
 
-    page.fill("#first-name", "Charvita")
-    page.fill("#postal-code", "33496")
-    page.click("#continue")
+    inventory_page.add_backpack()
+    inventory_page.open_cart()
 
-    error = page.locator("[data-test='error']")
-    expect(error).to_be_visible()
-    expect(error).to_contain_text("Last Name is required")
+    cart_page.proceed_to_checkout()
+
+    checkout_page.enter_checkout_information(
+        first_name="Charvita",
+        last_name="",
+        postal_code="33496",
+    )
+    checkout_page.continue_button.click()
+    checkout_page.verify_error_message(
+        "Last Name is required"
+    )

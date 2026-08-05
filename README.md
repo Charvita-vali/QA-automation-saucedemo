@@ -1,46 +1,154 @@
-# QA Automation — SauceDemo (Playwright + Python)
+# 🚀 QA Automation — SauceDemo (Playwright + Python)
 
-Automated test suite for [SauceDemo](https://www.saucedemo.com), built with Playwright and pytest. This automates core scenarios from my companion manual testing project ([qa-portfolio-saucedemo](https://github.com/Charvita-vali/QA-portfolio-saucedemo)).
+A self-directed UI automation testing project built using **Playwright**, **Python**, and **pytest**. This project automates critical user journeys of the SauceDemo e-commerce application and demonstrates modern UI automation framework design using the **Page Object Model (POM)**.
 
-## Tech Stack
+---
+
+## 🎯 Project Goals
+
+- Practice modern UI automation using Playwright
+- Build a maintainable automation framework using Page Object Model (POM)
+- Automate critical business workflows
+- Reduce duplicated code using reusable pytest fixtures
+- Demonstrate automation skills for Junior QA / SDET roles
+
+---
+
+## 🛠 Tech Stack
+
 - Python 3.12
 - Playwright
 - pytest
 - pytest-playwright
+- Git & GitHub
 
-## Test Coverage
+---
 
-### Login (`test_login.py`)
-- Valid login
-- Invalid login (wrong password)
-- Locked out user
+## 📁 Project Structure
 
-### Cart & Checkout (`test_cart_checkout.py`)
-- Add single item to cart
-- Add multiple items to cart
-- Remove item from product page
-- Full checkout flow (cart → checkout → order confirmation)
-- Checkout validation — missing Last Name shows error
-
-## How to Run
-
-1. Clone this repo
-2. Create and activate a virtual environment:
-```bash
-   python3 -m venv venv
-   source venv/bin/activate
+```text
+QA-automation-saucedemo/
+│
+├── README.md
+├── config.py
+├── tests/
+│   ├── conftest.py
+│   ├── test_login.py
+│   └── test_cart_checkout.py
+│
+├── pages/
+│   ├── login_page.py
+│   ├── inventory_page.py
+│   ├── cart_page.py
+│   └── checkout_page.py
+│
+└── .gitignore
 ```
-3. Install dependencies:
-```bash
-   pip install pytest playwright pytest-playwright
-   playwright install
-```
-4. Run the tests:
-```bash
-   pytest --headed
-```
-   Remove `--headed` to run in headless mode (no visible browser, faster — used for CI/CD).
 
-## Design Notes
-- Uses a `pytest` fixture (`logged_in_page`) to handle login setup once, reused across cart/checkout tests — avoids repeating the same steps in every test (DRY principle)
-- Tests use Playwright's built-in `expect()` assertions, which auto-wait for elements rather than relying on manual sleeps/timeouts — this makes tests more reliable and less flaky
+---
+
+## ✅ Test Coverage
+
+### Login
+
+- Valid Login
+- Invalid Password
+- Locked Out User
+
+### Cart
+
+- Add Single Item
+- Add Multiple Items
+- Remove Item
+
+### Checkout
+
+- Complete Checkout Flow
+- Required Field Validation
+
+---
+
+## ⚙ Framework Features
+
+- Page Object Model (POM)
+- Reusable pytest fixtures
+- Shared configuration
+- Playwright auto-wait assertions
+- Independent test execution
+- Headed & Headless execution
+
+---
+
+## ▶ Running the Tests
+
+Create a virtual environment
+
+```bash
+python3 -m venv venv
+source venv/bin/activate
+```
+
+Install dependencies
+
+```bash
+pip install -r requirements.txt
+playwright install
+```
+
+Run tests
+
+```bash
+pytest
+```
+
+Run headed
+
+```bash
+pytest --headed
+```
+
+---
+
+## 💡 Automation Concepts Demonstrated
+
+- UI Automation
+- Playwright Locators
+- Page Object Model
+- pytest Fixtures
+- Assertions
+- Auto Waiting
+- Positive Testing
+- Negative Testing
+- End-to-End Testing
+- Test Organization
+- Maintainable Automation Framework
+
+---
+
+## 📊 Project Metrics
+
+| Metric | Value |
+|---------|------:|
+| Pages Automated | 4 |
+| Test Files | 2 |
+| Automated Test Cases | 8 |
+| Framework Pattern | Page Object Model |
+| Test Framework | pytest |
+| Automation Tool | Playwright |
+
+---
+
+## 🚀 Future Enhancements
+
+- Cross-browser execution
+- Parallel execution
+- HTML reports
+- Screenshot capture on failures
+- GitHub Actions CI/CD
+- Data-driven testing
+
+---
+
+## 📌 Note
+
+This project was created for learning and portfolio purposes to demonstrate Playwright UI automation skills using the SauceDemo demo application provided by Sauce Labs.
